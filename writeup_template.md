@@ -18,42 +18,75 @@ The goals / steps of this project are the following:
 
 
 [//]: # (Image References)
-
 [image1]: ./examples/visualization.jpg "Visualization"
 [image2]: ./examples/grayscale.jpg "Grayscaling"
 [image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+[image4]: ./examples/go_ahead.png "Traffic Sign 1"
+[image5]: ./examples/go_straight_or_right_n.png "Traffic Sign 2"
+[image6]: ./examples/traffic-sign-6690_960_720.png "Traffic Sign 3"
+[image7]: ./examples/german_stop.png "Traffic Sign 4"
+[image8]: ./examples/wild_anima_crossing.png "Traffic Sign 5"
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
+Dataset Summary: 
+43 Signs and Sign names
+ClassId                                           SignName
+0         0                               Speed limit (20km/h)
+1         1                               Speed limit (30km/h)
+2         2                               Speed limit (50km/h)
+3         3                               Speed limit (60km/h)
+4         4                               Speed limit (70km/h)
+5         5                               Speed limit (80km/h)
+6         6                        End of speed limit (80km/h)
+7         7                              Speed limit (100km/h)
+8         8                              Speed limit (120km/h)
+9         9                                         No passing
+10       10       No passing for vehicles over 3.5 metric tons
+11       11              Right-of-way at the next intersection
+12       12                                      Priority road
+13       13                                              Yield
+14       14                                               Stop
+15       15                                        No vehicles
+16       16           Vehicles over 3.5 metric tons prohibited
+17       17                                           No entry
+18       18                                    General caution
+19       19                        Dangerous curve to the left
+20       20                       Dangerous curve to the right
+21       21                                       Double curve
+22       22                                         Bumpy road
+23       23                                      Slippery road
+24       24                          Road narrows on the right
+25       25                                          Road work
+26       26                                    Traffic signals
+27       27                                        Pedestrians
+28       28                                  Children crossing
+29       29                                  Bicycles crossing
+30       30                                 Beware of ice/snow
+31       31                              Wild animals crossing
+32       32                End of all speed and passing limits
+33       33                                   Turn right ahead
+34       34                                    Turn left ahead
+35       35                                         Ahead only
+36       36                               Go straight or right
+37       37                                Go straight or left
+38       38                                         Keep right
+39       39                                          Keep left
+40       40                               Roundabout mandatory
+41       41                                  End of no passing
+42       42  End of no passing by vehicles over 3.5 metric ...
+Number of training examples = 34799
+Number of testing examples = 12630
+Number of validation examples = 4410
+Image data shape = (32, 32, 3)
+Number of classes = 43
 
----
-###Writeup / README
+Exploratory Visualization:
+In the document I have plotted a sample of each class from training set. Also plotted a bar chart to show the distribution of classes in training data set.
 
 ####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
 
-You're reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
-
-###Data Set Summary & Exploration
-
-####1. Provide a basic summary of the data set. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
-
-I used the pandas library to calculate summary statistics of the traffic
-signs data set:
-
-* The size of training set is ?
-* The size of the validation set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
-
-####2. Include an exploratory visualization of the dataset.
-
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+You are reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
 
 ![alt text][image1]
 
@@ -61,21 +94,14 @@ Here is an exploratory visualization of the data set. It is a bar chart showing 
 
 ####1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
 
-As a first step, I decided to convert the images to grayscale because ...
+As a first step, I decided to convert the images to grayscale because 1. I tried changing Lenet to modify Lenet to work with a depth of 3 to use R,G and B components, but accuracy on training data came out very low. So I converted all images to grayscale.
 
-Here is an example of a traffic sign image before and after grayscaling.
 
-![alt text][image2]
+As a last step, I normalized the image data such that all datapoints are centered around 0 for activation funcions and backprops to work efficiently.
 
-As a last step, I normalized the image data because ...
-
-I decided to generate additional data because ... 
+I decided to generate additional data  to evaluate the accuracy of prediction of the trained model with new test images.
 
 To add more data to the the data set, I used the following techniques because ... 
-
-Here is an example of an original image and an augmented image:
-
-![alt text][image3]
 
 The difference between the original data set and the augmented data set is the following ... 
 
@@ -87,27 +113,36 @@ My final model consisted of the following layers:
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
 | Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
+| Convolution 5x5     	| 1x1 stride, same padding, outputs 28x28x6 	|
 | RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
- 
+| Max pooling	      	| 2x2 stride,  outputs 14x14x6  				|
+| Convolution 5x5	    |1x1 tride, outputs	 10x10x16					|
+| RELU					|												|
+| Max pooling	      	| 2x2 stride,  outputs 5x5x16 					|
+| Fully connected 1		| Output  120  									|
+| RELU					|												|
+| backdrop with 0.5 prob when training.
+| Fully connected 2		| Output 84    									|
+| RELU					|												|
+| backdrop with 0.5 prob when training. 
+| Fully connected 3		| Output 43    									|
+|
+| Minimize mean over Softmax over FC3 output							|
+
 
 
 ####3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
 To train the model, I used an ....
+Used Lenet implementation as reference and used BATCH size of 128, learning rate= 0.01, numberof epochs =10, as in lenet used adam optimizer.
 
 ####4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+I introduced 1 backdrop with 0.5 prob each after fc1 and fc2
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of 97.7
+* validation set accuracy of  93.3
+* test set accuracy of 90.9
 
 If an iterative approach was chosen:
 * What was the first architecture that was tried and why was it chosen?
@@ -139,11 +174,11 @@ Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Ahead only      		| Ahead only   									| 
+| Wild-Animal-Crossing  | Road work										|
+| Speed limit 60		| Speed limit 60								|
+| Go Straight or right	| Go Straight or Right			 				|
+| Stop		 			| Stop 											|
 
 
 The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
